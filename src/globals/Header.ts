@@ -11,6 +11,13 @@ export const Header: GlobalConfig = {
   },
   fields: [
     {
+      name: 'topBar',
+      type: 'text',
+      admin: {
+        description: 'Text to display in the top bar',
+      },
+    },
+    {
       name: 'navItems',
       type: 'array',
       fields: [
@@ -18,7 +25,7 @@ export const Header: GlobalConfig = {
           appearances: false,
         }),
       ],
-      maxRows: 6,
+      maxRows: 12,
     },
   ],
 }

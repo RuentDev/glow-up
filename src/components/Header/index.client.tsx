@@ -1,28 +1,59 @@
 'use client'
-import { CMSLink } from '@/components/Link'
-import { Cart } from '@/components/Cart'
-import { OpenCartButton } from '@/components/Cart/OpenCart'
-import Link from 'next/link'
-import React, { Suspense } from 'react'
 
-import { MobileMenu } from './MobileMenu'
-import type { Header } from 'src/payload-types'
-
-import { LogoIcon } from '@/components/icons/logo'
-import { usePathname } from 'next/navigation'
 import { cn } from '@/utilities/cn'
+import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+import type { Header, Logo } from 'src/payload-types'
+import { CMSLink } from '../Link'
+import LogoIcon from '../Logo/index.client'
+import { AccountBar } from './AccountBar'
+import RightActions from './RightActions'
+import TopBar from './TopBar'
 
 type Props = {
   header: Header
+  logo: Logo
 }
 
-export function HeaderClient({ header }: Props) {
+export function HeaderClient({ header, logo }: Props) {
   const menu = header.navItems || []
   const pathname = usePathname()
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   return (
-    <div className="relative z-20 border-b">
-      <nav className="flex items-center md:items-end justify-between container pt-2">
+    <header className="bg-background sticky top-0 z-50">
+      <TopBar />
+
+      <AccountBar />
+
+      <nav className="max-w-7xl mx-auto py-4 px-4 md:px-0 flex items-center justify-between">
+        <LogoIcon logo={logo} />
+
+        {/* Desktop Navigation */}
+        {menu.length ? (
+          <div className="hidden md:flex items-center gap-8">
+            <ul className="hidden gap-4 text-sm md:flex md:items-center">
+              {menu.map((item) => (
+                <li key={item.id}>
+                  <CMSLink
+                    {...item.link}
+                    className={cn('relative navLink', {
+                      active:
+                        item.link.url && item.link.url !== '/'
+                          ? pathname.includes(item.link.url)
+                          : false,
+                    })}
+                    appearance="nav"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        <RightActions isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+      </nav>
+
+      {/* <nav className="flex items-center md:items-end justify-between container pt-2">
         <div className="block flex-none md:hidden">
           <Suspense fallback={null}>
             <MobileMenu menu={menu} />
@@ -60,7 +91,7 @@ export function HeaderClient({ header }: Props) {
             </Suspense>
           </div>
         </div>
-      </nav>
-    </div>
+      </nav> */}
+    </header>
   )
 }

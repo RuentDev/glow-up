@@ -20,6 +20,7 @@ import { Pages } from '@/collections/Pages'
 import { Users } from '@/collections/Users'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
+import { Logo } from '@/globals/Logo'
 import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
@@ -36,6 +37,7 @@ export default buildConfig({
       beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
     },
     user: Users.slug,
+    theme: 'light', // 'dark' | 'light' | 'all' (user-toggleable)
   },
   collections: [Users, Pages, Categories, Media],
   db: postgresAdapter({
@@ -83,7 +85,7 @@ export default buildConfig({
   }),
   //email: nodemailerAdapter(),
   endpoints: [],
-  globals: [Header, Footer],
+  globals: [Logo, Header, Footer],
   plugins,
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

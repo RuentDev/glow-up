@@ -1,16 +1,14 @@
-import type { Footer } from '@/payload-types'
-
-import { FooterMenu } from '@/components/Footer/menu'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import type { Footer, Logo } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import { Mail, MapPin, Phone } from 'lucide-react'
 import Link from 'next/link'
-import React, { Suspense } from 'react'
-import { LogoIcon } from '@/components/icons/logo'
+import LogoIcon from '../Logo/index.client'
 
 const { COMPANY_NAME, SITE_NAME } = process.env
 
 export async function Footer() {
   const footer: Footer = await getCachedGlobal('footer', 1)()
+  const logo: Logo = await getCachedGlobal('logo', 1)()
   const menu = footer.navItems || []
   const currentYear = new Date().getFullYear()
   const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : '')
@@ -19,47 +17,133 @@ export async function Footer() {
   const copyrightName = COMPANY_NAME || SITE_NAME || ''
 
   return (
-    <footer className="text-sm text-neutral-500 dark:text-neutral-400">
-      <div className="container">
-        <div className="flex w-full flex-col gap-6 border-t border-neutral-200 py-12 text-sm md:flex-row md:gap-12 dark:border-neutral-700">
-          <div>
-            <Link className="flex items-center gap-2 text-black md:pt-1 dark:text-white" href="/">
-              <LogoIcon className="w-6" />
-              <span className="sr-only">{SITE_NAME}</span>
-            </Link>
+    <footer className="bg-foreground text-background">
+      <div className="max-w-7xl mx-auto py-16">
+        {/* Footer Grid */}
+        <div className="grid md:grid-cols-4 gap-12 mb-12">
+          {/* Brand */}
+          <div className="space-y-4">
+            <LogoIcon logo={logo} />
+            <p className="text-background/80 text-sm">
+              Your luxury beauty destination in the Philippines. Premium skincare, makeup, and
+              cosmetics from the world's best brands.
+            </p>
+            <div className="flex gap-4 text-sm">
+              <a href="#" className="hover:text-primary transition">
+                Facebook
+              </a>
+              <a href="#" className="hover:text-primary transition">
+                Instagram
+              </a>
+              <a href="#" className="hover:text-primary transition">
+                TikTok
+              </a>
+            </div>
           </div>
-          <Suspense
-            fallback={
-              <div className="flex h-[188px] w-[200px] flex-col gap-2">
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
-                <div className={skeleton} />
+
+          {/* Shop */}
+          <div className="space-y-3">
+            <h4 className="font-bold text-lg text-primary">Shop</h4>
+            <ul className="text-sm text-background/80 space-y-2">
+              <li>
+                <Link href="/makeup" className="hover:text-primary transition">
+                  Makeup
+                </Link>
+              </li>
+              <li>
+                <Link href="/skincare" className="hover:text-primary transition">
+                  Skincare
+                </Link>
+              </li>
+              <li>
+                <Link href="/bath-body" className="hover:text-primary transition">
+                  Bath & Body
+                </Link>
+              </li>
+              <li>
+                <Link href="/tools" className="hover:text-primary transition">
+                  Tools & Accessories
+                </Link>
+              </li>
+              <li>
+                <Link href="/sale" className="hover:text-primary transition">
+                  Sale
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Help */}
+          <div className="space-y-3">
+            <h4 className="font-bold text-lg text-primary">Help</h4>
+            <ul className="text-sm text-background/80 space-y-2">
+              <li>
+                <Link href="#" className="hover:text-primary transition">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-primary transition">
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-primary transition">
+                  Shipping Info
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-primary transition">
+                  Returns
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-primary transition">
+                  Privacy Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div className="space-y-4">
+            <h4 className="font-bold text-lg text-primary">Contact</h4>
+            <div className="text-sm text-background/80 space-y-3">
+              <div className="flex items-start gap-3">
+                <Phone className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span>(02) 8830 5000</span>
               </div>
-            }
-          >
-            <FooterMenu menu={menu} />
-          </Suspense>
-          <div className="md:ml-auto flex flex-col gap-4 items-end">
-            <ThemeSelector />
+              <div className="flex items-start gap-3">
+                <Mail className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <a
+                  href="mailto:custserv@beautybar.com.ph"
+                  className="hover:text-primary transition"
+                >
+                  custserv@beautybar.com.ph
+                </a>
+              </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span>Philippines</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="border-t border-neutral-200 py-6 text-sm dark:border-neutral-700">
-        <div className="container mx-auto flex w-full flex-col items-center gap-1 md:flex-row md:gap-0">
-          <p>
-            &copy; {copyrightDate} {copyrightName}
-            {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''} All rights reserved.
-          </p>
-          <hr className="mx-4 hidden h-4 w-px border-l border-neutral-400 md:inline-block" />
-          <p>Designed in Michigan</p>
-          <p className="md:ml-auto">
-            <a className="text-black dark:text-white" href="https://payloadcms.com">
-              Crafted by Payload
-            </a>
-          </p>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-background/20 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-background/70">
+          <p>© 2025 Beauty Bar Philippines. All Rights Reserved.</p>
+          <div className="flex gap-6 mt-4 md:mt-0">
+            <Link href="#" className="hover:text-primary transition">
+              Terms & Conditions
+            </Link>
+            <Link href="#" className="hover:text-primary transition">
+              Privacy Policy
+            </Link>
+            <Link href="#" className="hover:text-primary transition">
+              Sitemap
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

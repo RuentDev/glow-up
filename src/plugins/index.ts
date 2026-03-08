@@ -1,20 +1,22 @@
+import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-import { Plugin } from 'payload'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
-import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
+import { uploadthingStorage } from '@payloadcms/storage-uploadthing'
+import { Plugin } from 'payload'
 
 import { stripeAdapter } from '@payloadcms/plugin-ecommerce/payments/stripe'
 
+import { adminOnly } from '@/access/adminOnly'
+import { adminOrEditor } from '@/access/adminOrEditor'
+import { adminOrEditorFieldAccess } from '@/access/adminOrEditorFieldAccess'
+import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
+import { customerOnlyFieldAccess } from '@/access/customerOnlyFieldAccess'
+import { isDocumentOwner } from '@/access/isDocumentOwner'
+import { ProductsCollection } from '@/collections/Products'
 import { Page, Product } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
-import { ProductsCollection } from '@/collections/Products'
-import { adminOrPublishedStatus } from '@/access/adminOrPublishedStatus'
-import { adminOnlyFieldAccess } from '@/access/adminOnlyFieldAccess'
-import { customerOnlyFieldAccess } from '@/access/customerOnlyFieldAccess'
-import { isAdmin } from '@/access/isAdmin'
-import { isDocumentOwner } from '@/access/isDocumentOwner'
 
 const generateTitle: GenerateTitle<Product | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Ecommerce Template` : 'Payload Ecommerce Template'
@@ -37,9 +39,9 @@ export const plugins: Plugin[] = [
     },
     formSubmissionOverrides: {
       access: {
-        delete: isAdmin,
-        read: isAdmin,
-        update: isAdmin,
+        delete: adminOrEditor,
+        read: adminOrEditor,
+        update: adminOrEditor,
       },
       admin: {
         group: 'Content',
@@ -47,10 +49,10 @@ export const plugins: Plugin[] = [
     },
     formOverrides: {
       access: {
-        delete: isAdmin,
-        read: isAdmin,
-        update: isAdmin,
-        create: isAdmin,
+        delete: adminOrEditor,
+        read: adminOrEditor,
+        update: adminOrEditor,
+        create: adminOrEditor,
       },
       admin: {
         group: 'Content',
@@ -78,10 +80,10 @@ export const plugins: Plugin[] = [
   }),
   ecommercePlugin({
     access: {
-      adminOnlyFieldAccess,
+      adminOnlyFieldAccess: adminOrEditorFieldAccess,
       adminOrPublishedStatus,
       customerOnlyFieldAccess,
-      isAdmin,
+      isAdmin: adminOrEditor,
       isDocumentOwner,
     },
     customers: {
@@ -90,6 +92,12 @@ export const plugins: Plugin[] = [
     orders: {
       ordersCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        access: {
+          create: adminOnly,
+          read: adminOnly,
+          update: adminOnly,
+          delete: adminOnly,
+        },
         fields: [
           ...defaultCollection.fields,
           {
@@ -126,6 +134,38 @@ export const plugins: Plugin[] = [
     },
     products: {
       productsCollectionOverride: ProductsCollection,
+    },
+    carts: {
+      allowGuestCarts: true,
+      cartsCollectionOverride: ({ defaultCollection }) => ({
+        ...defaultCollection,
+        access: {
+          create: adminOnly,
+          read: adminOnly,
+          update: adminOnly,
+          delete: adminOnly,
+        },
+      }),
+    },
+    transactions: {
+      transactionsCollectionOverride: ({ defaultCollection }) => ({
+        ...defaultCollection,
+        access: {
+          create: adminOnly,
+          read: adminOnly,
+          update: adminOnly,
+          delete: adminOnly,
+        },
+      }),
+    },
+  }),
+  uploadthingStorage({
+    collections: {
+      media: true,
+    },
+    options: {
+      acl: 'public-read',
+      token: process.env.UPLOADTHING_TOKEN,
     },
   }),
 ]

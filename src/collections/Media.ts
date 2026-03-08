@@ -8,7 +8,7 @@ import {
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { adminOnly } from '@/access/adminOnly'
+import { adminOrEditor } from '@/access/adminOrEditor'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -19,16 +19,15 @@ export const Media: CollectionConfig = {
   },
   slug: 'media',
   access: {
-    create: adminOnly,
-    delete: adminOnly,
+    create: adminOrEditor,
+    delete: adminOrEditor,
     read: () => true,
-    update: adminOnly,
+    update: adminOrEditor,
   },
   fields: [
     {
       name: 'alt',
       type: 'text',
-      required: true,
     },
     {
       name: 'caption',

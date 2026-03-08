@@ -4,6 +4,8 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CarouselBlock } from '@/blocks/Carousel/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
+import { FourItemGridBlock } from '@/blocks/FourItemGrid/Component'
+import { ImageSliderBlock } from '@/blocks/ImageSlider/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ThreeItemGridBlock } from '@/blocks/ThreeItemGrid/Component'
 import { toKebabCase } from '@/utilities/toKebabCase'
@@ -15,9 +17,12 @@ const blockComponents = {
   archive: ArchiveBlock,
   banner: BannerBlock,
   carousel: CarouselBlock,
+  categoryShowcase: CarouselBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
+  fourItemGrid: FourItemGridBlock,
+  imageSlider: ImageSliderBlock,
   mediaBlock: MediaBlock,
   threeItemGrid: ThreeItemGridBlock,
 }
@@ -40,11 +45,11 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               return (
-                <div className="my-16" key={index}>
+                <Fragment key={index}>
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore - weird type mismatch here */}
                   <Block id={toKebabCase(blockName!)} {...block} />
-                </div>
+                </Fragment>
               )
             }
           }

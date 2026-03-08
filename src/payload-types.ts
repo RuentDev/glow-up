@@ -129,10 +129,12 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
+    logo: Logo;
     header: Header;
     footer: Footer;
   };
   globalsSelect: {
+    logo: LogoSelect<false> | LogoSelect<true>;
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
@@ -187,7 +189,7 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name?: string | null;
-  roles?: ('admin' | 'customer')[] | null;
+  roles?: ('admin' | 'customer' | 'editor' | 'sales')[] | null;
   orders?: {
     docs?: (number | Order)[];
     hasNextPage?: boolean;
@@ -325,7 +327,7 @@ export interface Product {
  */
 export interface Media {
   id: number;
-  alt: string;
+  alt?: string | null;
   caption?: {
     root: {
       type: string;
@@ -341,6 +343,7 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  _key?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -516,6 +519,7 @@ export interface Page {
         blockName?: string | null;
         blockType: 'cta';
       }
+    | CategoryShowcaseBlock
     | {
         columns?:
           | {
@@ -566,8 +570,10 @@ export interface Page {
     | ArchiveBlock
     | CarouselBlock
     | ThreeItemGridBlock
+    | FourItemGridBlock
     | BannerBlock
     | FormBlock
+    | ImageSliderBlock
   )[];
   meta?: {
     title?: string | null;
@@ -585,6 +591,33 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryShowcaseBlock".
+ */
+export interface CategoryShowcaseBlock {
+  heading?: string | null;
+  subHeading?: string | null;
+  categories?:
+    | {
+        item?: {
+          icon?: (number | null) | Media;
+          heading?: string | null;
+          subHeading?: string | null;
+          urlType?: ('reference' | 'custom') | null;
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
+          url?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'categoryShowcase';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -676,6 +709,17 @@ export interface ThreeItemGridBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'threeItemGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FourItemGridBlock".
+ */
+export interface FourItemGridBlock {
+  heading?: string | null;
+  products?: (number | Product)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'fourItemGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -901,6 +945,33 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageSliderBlock".
+ */
+export interface ImageSliderBlock {
+  heading?: string | null;
+  images?:
+    | {
+        slide?: {
+          image?: (number | null) | Media;
+          heading?: string | null;
+          subHeading?: string | null;
+          btnText?: string | null;
+          btnType?: ('reference' | 'custom') | null;
+          reference?: {
+            relationTo: 'pages';
+            value: number | Page;
+          } | null;
+          url?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'imageSlider';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1302,13 +1373,16 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         cta?: T | CallToActionBlockSelect<T>;
+        categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         carousel?: T | CarouselBlockSelect<T>;
         threeItemGrid?: T | ThreeItemGridBlockSelect<T>;
+        fourItemGrid?: T | FourItemGridBlockSelect<T>;
         banner?: T | BannerBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        imageSlider?: T | ImageSliderBlockSelect<T>;
       };
   meta?:
     | T
@@ -1341,6 +1415,31 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryShowcaseBlock_select".
+ */
+export interface CategoryShowcaseBlockSelect<T extends boolean = true> {
+  heading?: T;
+  subHeading?: T;
+  categories?:
+    | T
+    | {
+        item?:
+          | T
+          | {
+              icon?: T;
+              heading?: T;
+              subHeading?: T;
+              urlType?: T;
+              reference?: T;
+              url?: T;
             };
         id?: T;
       };
@@ -1422,6 +1521,16 @@ export interface ThreeItemGridBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FourItemGridBlock_select".
+ */
+export interface FourItemGridBlockSelect<T extends boolean = true> {
+  heading?: T;
+  products?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "BannerBlock_select".
  */
 export interface BannerBlockSelect<T extends boolean = true> {
@@ -1443,6 +1552,31 @@ export interface FormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ImageSliderBlock_select".
+ */
+export interface ImageSliderBlockSelect<T extends boolean = true> {
+  heading?: T;
+  images?:
+    | T
+    | {
+        slide?:
+          | T
+          | {
+              image?: T;
+              heading?: T;
+              subHeading?: T;
+              btnText?: T;
+              btnType?: T;
+              reference?: T;
+              url?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
@@ -1459,6 +1593,7 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  _key?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1871,10 +2006,39 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "logo".
+ */
+export interface Logo {
+  id: number;
+  /**
+   * Text to display in the top bar
+   */
+  link?: string | null;
+  /**
+   * Choose whether to use an image or text as the logo
+   */
+  logoType?: ('image' | 'text') | null;
+  /**
+   * Logo image to display in the header
+   */
+  logoImage?: (number | null) | Media;
+  /**
+   * Text to use as the logo
+   */
+  logoText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header".
  */
 export interface Header {
   id: number;
+  /**
+   * Text to display in the top bar
+   */
+  topBar?: string | null;
   navItems?:
     | {
         link: {
@@ -1919,9 +2083,23 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "logo_select".
+ */
+export interface LogoSelect<T extends boolean = true> {
+  link?: T;
+  logoType?: T;
+  logoImage?: T;
+  logoText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  topBar?: T;
   navItems?:
     | T
     | {
