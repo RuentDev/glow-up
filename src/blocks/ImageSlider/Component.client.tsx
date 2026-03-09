@@ -82,7 +82,7 @@ export const ImageSlider = ({ images }: Props) => {
 
                 {/* Content Overlay */}
                 {(item.slide?.heading || item.slide?.subHeading) && (
-                  <div className="absolute inset-0 z-10 max-w-7xl mx-auto px-6 md:px-0 flex items-center">
+                  <div className="absolute inset-0 z-10 max-w-7xl mx-auto px-4 lg:px-0 flex items-center">
                     <div className="max-w-2xl space-y-4 md:space-y-6 text-white">
                       <h2 className="text-4xl md:text-6xl font-bold leading-tight text-balance">
                         {item.slide?.heading}

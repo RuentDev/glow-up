@@ -17,6 +17,7 @@ import { fileURLToPath } from 'url'
 import { Categories } from '@/collections/Categories'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
+import { Ratings } from '@/collections/Ratings'
 import { Users } from '@/collections/Users'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
@@ -39,7 +40,7 @@ export default buildConfig({
     user: Users.slug,
     theme: 'light', // 'dark' | 'light' | 'all' (user-toggleable)
   },
-  collections: [Users, Pages, Categories, Media],
+  collections: [Users, Pages, Categories, Media, Ratings],
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL || '',

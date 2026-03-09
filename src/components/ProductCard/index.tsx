@@ -4,20 +4,29 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { Media as MediaType, Product } from '@/payload-types'
 import { cn } from '@/utilities/cn'
-import { useCart } from '@payloadcms/plugin-ecommerce/client/react'
 import { Heart, ShoppingBag } from 'lucide-react'
+import { Price } from '../Price'
 
 interface ProductCardProps {
   product: Product | number
+  isSubmiting: boolean
+  amount: number
+  stock: number
+  averageRating: number
+  onAddToCart: (product: Product) => void
 }
 
-export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart()
+export function ProductCard({
+  product,
+  amount,
+  stock,
+  averageRating,
+  isSubmiting,
+  onAddToCart,
+}: ProductCardProps) {
   if (typeof product !== 'object') return
-  const rating = 0
-  const price = typeof product.priceInUSD === 'number' ? product.priceInUSD : 0
-  // const originalPrice = 250.0
-  const inStock = typeof product.inventory === 'number' && product.inventory > 0
+  const inStock = typeof stock === 'number' && stock > 0
+
   return (
     <div className="group bg-card rounded-lg overflow-hidden border border-border hover:shadow-lg hover:shadow-primary/10 transition">
       {/* Product Image Area */}
@@ -53,36 +62,30 @@ export function ProductCard({ product }: ProductCardProps) {
         </h3>
 
         {/* Rating */}
-        {rating > 0 && (
+        {averageRating > 0 && (
           <div className="flex items-center gap-2 text-sm">
             <div className="flex gap-0.5">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={i < rating ? 'text-primary' : 'text-border'}>
+                <span key={i} className={i < averageRating ? 'text-primary' : 'text-border'}>
                   ★
                 </span>
               ))}
             </div>
-            <span className="text-foreground/60">({rating})</span>
+            <span className="text-foreground/60">({product.totalRatings || 0})</span>
           </div>
         )}
 
-        {/* Price */}
-        <div className="flex items-baseline gap-2">
-          {price > 0 && (
-            <span className="text-lg font-bold text-foreground">
-              {(price / 100).toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'PHP',
-              })}
-            </span>
-          )}
-        </div>
+        <Price
+          amount={amount}
+          currencyCode="PHP"
+          className="text-base text-black dark:text-white"
+        />
 
         {/* Add to Cart Button */}
         <Button
           type="button"
-          disabled={!inStock}
-          onClick={() => addItem({ product: product.id })}
+          disabled={!inStock || isSubmiting || amount == 0}
+          onClick={() => onAddToCart(product)}
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg"
         >
           <ShoppingBag className="w-4 h-4 mr-2" />

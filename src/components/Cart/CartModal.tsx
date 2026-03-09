@@ -78,12 +78,12 @@ export function CartModal() {
                       : undefined
 
                   let image = firstGalleryImage || metaImage
-                  let price = product.priceInUSD
+                  let price = product.priceInPHP
 
                   const isVariant = Boolean(variant) && typeof variant === 'object'
 
                   if (isVariant) {
-                    price = variant?.priceInUSD
+                    price = variant?.priceInPHP
 
                     const imageVariant = product.gallery?.find((item: any) => {
                       if (!item.variantOption) return false
@@ -164,11 +164,12 @@ export function CartModal() {
 
               <div className="px-4">
                 <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
-                  {typeof cart?.subtotal === 'number' && (
+                  {typeof cart.subtotal === 'number' && (
                     <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
                       <p>Total</p>
                       <Price
-                        amount={cart?.subtotal}
+                        amount={cart.subtotal}
+                        currencyCode="PHP"
                         className="text-right text-base text-black dark:text-white"
                       />
                     </div>

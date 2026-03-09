@@ -1,4 +1,4 @@
-import { ecommercePlugin } from '@payloadcms/plugin-ecommerce'
+import { ecommercePlugin, USD } from '@payloadcms/plugin-ecommerce'
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
@@ -139,12 +139,14 @@ export const plugins: Plugin[] = [
       allowGuestCarts: true,
       cartsCollectionOverride: ({ defaultCollection }) => ({
         ...defaultCollection,
+        custom: {},
         access: {
-          create: adminOnly,
-          read: adminOnly,
-          update: adminOnly,
-          delete: adminOnly,
+          create: () => true,
+          read: () => true,
+          update: () => true,
+          delete: () => true,
         },
+        // fields: [...defaultCollection.fields],
       }),
     },
     transactions: {
@@ -157,6 +159,18 @@ export const plugins: Plugin[] = [
           delete: adminOnly,
         },
       }),
+    },
+    currencies: {
+      supportedCurrencies: [
+        USD,
+        {
+          code: 'PHP',
+          decimals: 2,
+          label: 'Philippine Peso',
+          symbol: '₱',
+        },
+      ],
+      defaultCurrency: 'PHP',
     },
   }),
   uploadthingStorage({

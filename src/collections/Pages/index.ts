@@ -10,6 +10,7 @@ import { CategoryShowcase } from '@/blocks/CategoryShowcase/config'
 import { Content } from '@/blocks/Content/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { FourItemGrid } from '@/blocks/FourItemGrid/config'
+import { Grid } from '@/blocks/Grid/config'
 import { ImageSlider } from '@/blocks/ImageSlider/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { ThreeItemGrid } from '@/blocks/ThreeItemGrid/config'
@@ -102,6 +103,7 @@ export const Pages: CollectionConfig = {
                 Banner,
                 FormBlock,
                 ImageSlider,
+                Grid,
               ],
               required: true,
             },

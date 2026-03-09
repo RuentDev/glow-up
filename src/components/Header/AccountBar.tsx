@@ -10,7 +10,7 @@ export const AccountBar = () => {
 
   return (
     <div className="border-b border-border bg-background">
-      <div className="max-w-7xl mx-auto py-2 flex items-center justify-between text-sm">
+      <div className="max-w-7xl mx-auto h-10 p-4 lg:p-0 flex items-center justify-between text-sm">
         <div className="flex items-center gap-4">
           {isLogin ? (
             <Link href="/account" className="flex items-center gap-2 hover:text-primary transition">

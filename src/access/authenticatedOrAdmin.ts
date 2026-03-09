@@ -1,0 +1,10 @@
+import type { Access } from 'payload'
+import { checkRole } from './utilities'
+
+export const authenticatedOrAdmin: Access = ({ req: { user } }) => {
+  if (user && checkRole(['admin'], user)) {
+    return true
+  }
+
+  return Boolean(user)
+}

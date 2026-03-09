@@ -25,7 +25,7 @@ export function HeaderClient({ header, logo }: Props) {
 
       <AccountBar />
 
-      <nav className="max-w-7xl mx-auto py-4 px-4 md:px-0 flex items-center justify-between">
+      <nav className="max-w-7xl mx-auto py-4 px-4 lg:px-0 flex items-center justify-between">
         <LogoIcon logo={logo} />
 
         {/* Desktop Navigation */}

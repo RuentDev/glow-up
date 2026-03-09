@@ -48,9 +48,11 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
     variants: true,
     enableVariants: true,
     gallery: true,
-    priceInUSD: true,
+    priceInPHP: true,
     inventory: true,
     meta: true,
+    averageRating: true,
+    totalRatings: true,
   },
   fields: [
     { name: 'title', type: 'text', required: true },
@@ -205,6 +207,33 @@ export const ProductsCollection: CollectionOverride = ({ defaultCollection }) =>
       },
       hasMany: true,
       relationTo: 'categories',
+    },
+    {
+      name: 'averageRating',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+      defaultValue: 0,
+    },
+    {
+      name: 'totalRatings',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+      defaultValue: 0,
+    },
+    {
+      name: 'ratings',
+      type: 'join',
+      admin: {
+        position: 'sidebar',
+      },
+      collection: 'ratings',
+      on: 'product',
     },
     slugField(),
   ],

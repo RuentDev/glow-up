@@ -76,6 +76,7 @@ export interface Config {
     pages: Page;
     categories: Category;
     media: Media;
+    ratings: Rating;
     forms: Form;
     'form-submissions': FormSubmission;
     addresses: Address;
@@ -102,6 +103,7 @@ export interface Config {
     };
     products: {
       variants: 'variants';
+      ratings: 'ratings';
     };
   };
   collectionsSelect: {
@@ -109,6 +111,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    ratings: RatingsSelect<false> | RatingsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     addresses: AddressesSelect<false> | AddressesSelect<true>;
@@ -256,7 +259,7 @@ export interface Order {
   transactions?: (number | Transaction)[] | null;
   status?: OrderStatus;
   amount?: number | null;
-  currency?: 'USD' | null;
+  currency?: ('USD' | 'PHP') | null;
   accessToken?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -301,6 +304,8 @@ export interface Product {
   };
   priceInUSDEnabled?: boolean | null;
   priceInUSD?: number | null;
+  priceInPHPEnabled?: boolean | null;
+  priceInPHP?: number | null;
   relatedProducts?: (number | Product)[] | null;
   meta?: {
     title?: string | null;
@@ -311,6 +316,13 @@ export interface Product {
     description?: string | null;
   };
   categories?: (number | Category)[] | null;
+  averageRating?: number | null;
+  totalRatings?: number | null;
+  ratings?: {
+    docs?: (number | Rating)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -574,6 +586,7 @@ export interface Page {
     | BannerBlock
     | FormBlock
     | ImageSliderBlock
+    | GridBlock
   )[];
   meta?: {
     title?: string | null;
@@ -716,6 +729,7 @@ export interface ThreeItemGridBlock {
  */
 export interface FourItemGridBlock {
   heading?: string | null;
+  subHeading?: string | null;
   products?: (number | Product)[] | null;
   id?: string | null;
   blockName?: string | null;
@@ -975,6 +989,37 @@ export interface ImageSliderBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GridBlock".
+ */
+export interface GridBlock {
+  heading?: string | null;
+  subHeading?: string | null;
+  spacing?: {
+    margin?: number | null;
+    padding?: number | null;
+  };
+  gridSettings: {
+    gap?: number | null;
+    columns?: number | null;
+    row?: number | null;
+    cardHeight: number;
+    cardRadius?: number | null;
+  };
+  items?:
+    | {
+        image?: (number | null) | Media;
+        title?: string | null;
+        buttonText?: string | null;
+        buttonLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'grid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
@@ -1043,10 +1088,25 @@ export interface Variant {
   inventory?: number | null;
   priceInUSDEnabled?: boolean | null;
   priceInUSD?: number | null;
+  priceInPHPEnabled?: boolean | null;
+  priceInPHP?: number | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ratings".
+ */
+export interface Rating {
+  id: number;
+  user: number | User;
+  product: number | Product;
+  rating: number;
+  review?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1086,7 +1146,7 @@ export interface Transaction {
   order?: (number | null) | Order;
   cart?: (number | null) | Cart;
   amount?: number | null;
-  currency?: 'USD' | null;
+  currency?: ('USD' | 'PHP') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1109,7 +1169,7 @@ export interface Cart {
   purchasedAt?: string | null;
   status?: ('active' | 'purchased' | 'abandoned') | null;
   subtotal?: number | null;
-  currency?: 'USD' | null;
+  currency?: ('USD' | 'PHP') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1230,6 +1290,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'ratings';
+        value: number | Rating;
       } | null)
     | ({
         relationTo: 'forms';
@@ -1383,6 +1447,7 @@ export interface PagesSelect<T extends boolean = true> {
         banner?: T | BannerBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         imageSlider?: T | ImageSliderBlockSelect<T>;
+        grid?: T | GridBlockSelect<T>;
       };
   meta?:
     | T
@@ -1525,6 +1590,7 @@ export interface ThreeItemGridBlockSelect<T extends boolean = true> {
  */
 export interface FourItemGridBlockSelect<T extends boolean = true> {
   heading?: T;
+  subHeading?: T;
   products?: T;
   id?: T;
   blockName?: T;
@@ -1577,6 +1643,40 @@ export interface ImageSliderBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GridBlock_select".
+ */
+export interface GridBlockSelect<T extends boolean = true> {
+  heading?: T;
+  subHeading?: T;
+  spacing?:
+    | T
+    | {
+        margin?: T;
+        padding?: T;
+      };
+  gridSettings?:
+    | T
+    | {
+        gap?: T;
+        columns?: T;
+        row?: T;
+        cardHeight?: T;
+        cardRadius?: T;
+      };
+  items?:
+    | T
+    | {
+        image?: T;
+        title?: T;
+        buttonText?: T;
+        buttonLink?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
@@ -1605,6 +1705,18 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ratings_select".
+ */
+export interface RatingsSelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
+  rating?: T;
+  review?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1786,6 +1898,8 @@ export interface VariantsSelect<T extends boolean = true> {
   inventory?: T;
   priceInUSDEnabled?: T;
   priceInUSD?: T;
+  priceInPHPEnabled?: T;
+  priceInPHP?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -1843,6 +1957,8 @@ export interface ProductsSelect<T extends boolean = true> {
   variants?: T;
   priceInUSDEnabled?: T;
   priceInUSD?: T;
+  priceInPHPEnabled?: T;
+  priceInPHP?: T;
   relatedProducts?: T;
   meta?:
     | T
@@ -1852,6 +1968,9 @@ export interface ProductsSelect<T extends boolean = true> {
         description?: T;
       };
   categories?: T;
+  averageRating?: T;
+  totalRatings?: T;
+  ratings?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;

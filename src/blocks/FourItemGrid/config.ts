@@ -8,10 +8,15 @@ export const FourItemGrid: Block = {
       type: 'text',
     },
     {
+      name: 'subHeading',
+      type: 'text',
+    },
+    {
       name: 'products',
       type: 'relationship',
       admin: {
         isSortable: true,
+        width: '50%',
       },
       hasMany: true,
       label: 'Products to show',

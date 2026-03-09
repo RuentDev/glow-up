@@ -13,18 +13,16 @@ export function OpenCartButton({
     <Button
       variant="nav"
       size="clear"
-      className="p-2 hover:bg-secondary rounded-lg transition hidden md:block"
+      className="relative p-2 hover:bg-transparent rounded-lg transition hidden md:block"
       {...rest}
     >
-      {/* <span>Cart</span> */}
-      <ShoppingBag className="w-5 h-5 text-foreground" />
-
       {quantity ? (
-        <>
-          <span>•</span>
+        <div className="absolute -top-2 right-2 flex items-center justify-center w-4 h-4">
+          <span>+</span>
           <span>{quantity}</span>
-        </>
+        </div>
       ) : null}
+      <ShoppingBag className="w-10 h-10 text-foreground" width={20} height={20} />
     </Button>
   )
 }
